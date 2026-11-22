@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>bussphotonig</title>
+<style>
+  :root{ --azul:#0474E4; }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui, -apple-system, "Segoe UI", Roboto, sans-serif}
+  body{background:white;height:100vh;display:flex;flex-direction:column}
+  .tela{display:none;flex-direction:column;height:100vh}
+  .tela.ativa{display:flex}
+
+  .topo-vazio{height:70px;width:100%}
+  .meio{flex:1;display:flex;flex-direction:column;justify-content:center;padding-left:38px;gap:18px}
+  .btn-click{background:var(--azul);color:white;border:none;border-radius:3px;width:225px;height:68px;font-size:25px;font-weight:900;letter-spacing:-0.5px;text-align:left;padding-left:20px;cursor:pointer}
+  .btn-centro{background:var(--azul);color:white;border:none;border-radius:3px;width:225px;height:68px;font-size:25px;font-weight:900;letter-spacing:-0.5px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+  .topo-azul{background:var(--azul);color:white;display:flex;align-items:center;height:60px;padding:0 14px;gap:16px;user-select:none}
+  .voltar{cursor:pointer;display:flex;align-items:center}
+  .topo-azul h1{font-size:22px;font-weight:900;letter-spacing:-0.5px}
+
+  .form{flex:1;padding:32px 28px 15px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+  .form label{font-size:20px;font-weight:900;letter-spacing:-0.5px}
+  .form input, .form select{border:none;border-bottom:3px solid black;outline:none;font-size:17px;padding:6px 4px;width:100%;font-weight:800;background:white}
+  .caixa-msg{border:4px solid black;border-radius:32px 4px 32px 32px;height:140px;padding:14px;margin-top:12px}
+  .caixa-msg textarea{width:100%;height:100%;border:none;outline:none;font-size:18px;font-weight:900;resize:none}
+  .btn-enviar{background:var(--azul);color:white;border:none;height:60px;font-size:20px;font-weight:900;cursor:pointer;width:100%}
+
+  .lista{flex:1;padding:20px 20px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+  .card{border:3px solid black;border-radius:18px 4px 18px 18px;padding:14px}
+  .card b{font-size:18px}
+  .card p{font-size:16px;margin-top:4px;word-break:break-word}
+  .card .assunto{color:#333}
+  .card img{width:100%;height:auto;border-radius:10px;margin-top:10px;display:block}
+  .apagar{background:#ff3b30;color:white;border:none;border-radius:3px;padding:8px 16px;font-size:15px;font-weight:900;margin-top:10px;cursor:pointer}
+
+  .adm-botoes{display:flex;gap:12px;padding:16px 20px 0}
+  .adm-btn{flex:1;height:52px;border:none;border-radius:8px;font-size:18px;font-weight:900;cursor:pointer;background:#e8e8e8;color:#333}
+  .adm-btn.ativo{background:var(--azul);color:white}
+
+  .btn-foto{background:white;border:3px dashed var(--azul);color:var(--azul);border-radius:12px;height:120px;font-size:18px;font-weight:900;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;margin-top:8px}
+  .btn-foto span{font-size:32px}
+  #previewFoto{width:100%;height:auto;border-radius:12px;margin-top:10px;display:none;border:2px solid #e5e5e5}
+
+  .empresas-lista{flex:1;overflow-y:auto;padding:18px 20px 10px;display:flex;flex-direction:column;gap:14px}
+  .emp{width:100%;background:white;border:2px solid #e5e5e5;border-radius:12px;padding:16px 14px;display:flex;align-items:center;cursor:pointer;text-align:left}
+  .emp-nome{font-size:19px;font-weight:900;letter-spacing:-0.5px}
+
+  /* FOTOS DA EMPRESA */
+  .fotos-lista{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px}
+  .foto-card{border:2px solid #e5e5e5;border-radius:12px;padding:12px}
+  .foto-card img{width:100%;height:auto;border-radius:10px;display:block}
+  .foto-card p{font-size:16px;font-weight:700;margin-top:8px;word-break:break-word}
+
+  #overlay{position:fixed;top:60px;bottom:0;left:0;right:0;background:white;display:none;flex-direction:column;justify-content:center;align-items:center;z-index:9999}
+  .girando{width:44px;height:44px;border:5px solid #ddd;border-top:5px solid var(--azul);border-radius:50%;animation:girar 0.8s linear infinite}
+  @keyframes girar{to{transform:rotate(360deg)}}
+  #overlay p{font-size:18px;font-weight:900;margin-top:14px}
+</style>
+</head>
+<body>
+
+<div id="tela1" class="tela ativa">
+  <div class="topo-vazio" id="logo"></div>
+  <div class="meio">
+    <button class="btn-click" onclick="abrirFale()">Fale Conosco</button>
+    <button class="btn-centro" onclick="abrirEmpresas()">Empresas</button>
+  </div>
+</div>
+
+<div id="tela2" class="tela">
+  <div class="topo-azul">
+    <span class="voltar" onclick="voltarPara1()">
+      <svg width="26" height="20" viewBox="0 0 34 28" fill="none"><path d="M32 14H6M6 14L18 3M6 14L18 25" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <h1>Fale Conosco</h1>
+  </div>
+  <div class="form">
+    <label>Nome:</label>
+    <input id="nome" type="text">
+    <label style="margin-top:12px">Assunto:</label>
+    <input id="assunto" type="text">
+    <div class="caixa-msg"><textarea id="mensagem" placeholder="Mensagem..."></textarea></div>
+  </div>
+  <button class="btn-enviar" onclick="enviar()">ENVIAR</button>
+</div>
+
+<div id="tela3" class="tela">
+  <div class="topo-azul">
+    <span class="voltar" onclick="voltarPara1()">
+      <svg width="26" height="20" viewBox="0 0 34 28" fill="none"><path d="M32 14H6M6 14L18 3M6 14L18 25" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <h1>ADM</h1>
+  </div>
+  <div class="adm-botoes">
+    <button class="adm-btn ativo" id="btnMsg" onclick="mostrarAba('msg')">Mensagens</button>
+    <button class="adm-btn" id="btnPub" onclick="mostrarAba('pub')">Publicar</button>
+  </div>
+  <div class="lista" id="listaMsg"></div>
+  <div class="form" id="formPub" style="display:none">
+    <label>Foto do ônibus:</label>
+    <input type="file" id="pubFoto" accept="image/*" style="display:none" onchange="verFoto(this)">
+    <div class="btn-foto" onclick="document.getElementById('pubFoto').click()"><span>📷</span>TOCAR PARA ESCOLHER FOTO</div>
+    <img id="previewFoto">
+    <label style="margin-top:14px">Publicar para qual empresa?</label>
+    <select id="pubEmpresa">
+      <option>Viação São José</option>
+      <option>Vera Cruz</option>
+      <option>Linave</option>
+      <option>Mirante</option>
+      <option>Nilopolitana</option>
+      <option>Expresso Nossa Senhora da Glória</option>
+      <option>Empresa de Transportes Flores</option>
+      <option>Evanil</option>
+      <option>Transportes Blanco</option>
+      <option>Viação Nossa Senhora da Penha</option>
+    </select>
+    <label style="margin-top:14px">Título / Descrição:</label>
+    <div class="caixa-msg"><textarea id="pubTexto" placeholder="Ex: São José RJ 200.015 no Terminal..."></textarea></div>
+    <button class="btn-enviar" onclick="publicar()" style="margin-top:12px">PUBLICAR FOTO</button>
+    <div id="listaPub" style="margin-top:14px;display:flex;flex-direction:column;gap:12px"></div>
+  </div>
+</div>
+
+<div id="tela5" class="tela">
+  <div class="topo-azul" id="topoEmpresas">
+    <span class="voltar" onclick="voltarPara1()">
+      <svg width="26" height="20" viewBox="0 0 34 28" fill="none"><path d="M32 14H6M6 14L18 3M6 14L18 25" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <h1>Empresas</h1>
+  </div>
+  <div class="empresas-lista" id="listaEmpresas"></div>
+</div>
+
+<div id="tela6" class="tela">
+  <div class="topo-azul">
+    <span class="voltar" onclick="voltarEmpresas()">
+      <svg width="26" height="20" viewBox="0 0 34 28" fill="none"><path d="M32 14H6M6 14L18 3M6 14L18 25" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <h1 id="tituloEmpresa">Empresa</h1>
+  </div>
+  <div class="fotos-lista" id="fotosEmpresa"></div>
+</div>
+
+<div id="overlay"><div class="girando"></div><p id="textoLoop">Carregando...</p></div>
+
+<script>
+const empresas = [
+  "Viação São José",
+  "Vera Cruz",
+  "Linave",
+  "Mirante",
+  "Nilopolitana",
+  "Expresso Nossa Senhora da Glória",
+  "Empresa de Transportes Flores",
+  "Evanil",
+  "Transportes Blanco",
+  "Viação Nossa Senhora da Penha",
+];
+function renderEmpresas(){
+  let div = document.getElementById("listaEmpresas");
+  div.innerHTML = "";
+  empresas.forEach(nome=>{
+    div.innerHTML += '<div class="emp" onclick="abrirEmpresa(\''+nome+'\')"><div class="emp-nome">'+nome+'</div></div>';
+  });
+}
+renderEmpresas();
+
+function abrirEmpresa(nome){
+  document.getElementById("tituloEmpresa").textContent = nome;
+  let lista = JSON.parse(localStorage.getItem("publicacoes") || "[]");
+  let filtradas = lista.filter(p=>p.empresa==nome);
+  let div = document.getElementById("fotosEmpresa");
+  if(filtradas.length==0){ div.innerHTML = ""; return; }
+  div.innerHTML = "";
+  filtradas.forEach(p=>{
+    div.innerHTML += '<div class="foto-card"><img src="'+p.foto+'"><p>'+(p.texto||"")+'</p></div>';
+  });
+  mostrar("tela6");
+}
+function voltarEmpresas(){ mostrar("tela5"); }
+
+function pararLoopVisual(){
+  document.getElementById("overlay").style.display = "none";
+  document.getElementById("textoLoop").style.display = "block";
+}
+function mostrar(id){
+  document.querySelectorAll(".tela").forEach(t=>t.classList.remove("ativa"));
+  document.getElementById(id).classList.add("ativa");
+}
+function abrirFale(){ mostrar("tela2"); }
+function voltarPara1(){
+  // Setinha só volta, NÃO destrava o loop travado
+  // Se o loop tiver travado, ele continua travado pro visitante
+  pararLoopVisual();
+  mostrar("tela1");
+}
+
+// LOOP TRAVADO - salvo, fica pra todo mundo até tu destravar
+function estaTravado(){ return localStorage.getItem("loopTravado")=="1"; }
+function abrirEmpresas(){
+  mostrar("tela5");
+  document.getElementById("textoLoop").style.display = "none";
+  document.getElementById("overlay").style.display = "flex";
+  if(estaTravado()){
+    // TRAVADO: não tem setTimeout, fica girando pra sempre
+    return;
+  }
+  setTimeout(()=>{
+    if(!estaTravado()){
+      document.getElementById("overlay").style.display = "none";
+      document.getElementById("textoLoop").style.display = "block";
+    }
+  }, 900);
+}
+// 2 CLIQUES NO TOPO = TRAVA / DESTRAVA - só tu sabe
+let cliquesTopo = 0, timerTopo = null;
+document.getElementById("topoEmpresas").addEventListener("click", (e)=>{
+  if(e.target.closest(".voltar")) return;
+  cliquesTopo++;
+  clearTimeout(timerTopo);
+  timerTopo = setTimeout(()=>{ cliquesTopo = 0; }, 400);
+  if(cliquesTopo >= 2){
+    cliquesTopo = 0;
+    if(estaTravado()){
+      localStorage.setItem("loopTravado","0");
+      alert("Loop destravado! Agora volta ao normal.");
+      pararLoopVisual();
+    } else {
+      localStorage.setItem("loopTravado","1");
+      document.getElementById("textoLoop").style.display = "none";
+      document.getElementById("overlay").style.display = "flex";
+      alert("Loop travado! Vai ficar girando pro visitante até tu destravar.");
+    }
+  }
+});
+// Visitante tocar no giro NÃO para mais quando tá travado
+document.getElementById("overlay").addEventListener("click", ()=>{
+  if(!estaTravado()) pararLoopVisual();
+});
+
+function enviar(){
+  let nome = document.getElementById("nome").value;
+  let assunto = document.getElementById("assunto").value;
+  let msg = document.getElementById("mensagem").value;
+  if(!nome || !msg){ alert("Preenche o nome e a mensagem!"); return; }
+  let lista = JSON.parse(localStorage.getItem("mensagens") || "[]");
+  lista.push({nome: nome, assunto: assunto, msg: msg});
+  localStorage.setItem("mensagens", JSON.stringify(lista));
+  alert("Enviado!");
+  document.getElementById("nome").value = "";
+  document.getElementById("assunto").value = "";
+  document.getElementById("mensagem").value = "";
+  voltarPara1();
+}
+function mostrarAba(aba){
+  document.getElementById("btnMsg").classList.toggle("ativo", aba=="msg");
+  document.getElementById("btnPub").classList.toggle("ativo", aba=="pub");
+  document.getElementById("listaMsg").style.display = aba=="msg" ? "flex" : "none";
+  document.getElementById("formPub").style.display = aba=="pub" ? "flex" : "none";
+  if(aba=="msg") carregarADM();
+  if(aba=="pub") carregarPub();
+}
+function carregarADM(){
+  let lista = JSON.parse(localStorage.getItem("mensagens") || "[]");
+  let div = document.getElementById("listaMsg");
+  if(lista.length==0){ div.innerHTML = ""; return; }
+  div.innerHTML = "";
+  lista.forEach((m,i)=>{ div.innerHTML += '<div class="card"><b>'+m.nome+'</b><p class="assunto">Assunto: '+ (m.assunto||"-") +'</p><p>'+m.msg+'</p><button class="apagar" onclick="apagar('+i+')">APAGAR</button></div>'; });
+}
+function apagar(i){
+  let lista = JSON.parse(localStorage.getItem("mensagens") || "[]");
+  lista.splice(i,1); localStorage.setItem("mensagens", JSON.stringify(lista)); carregarADM();
+}
+let fotoBase64 = "";
+function verFoto(input){
+  let file = input.files[0];
+  if(!file) return;
+  let reader = new FileReader();
+  reader.onload = function(e){
+    let img = new Image();
+    img.onload = function(){
+      let canvas = document.createElement("canvas");
+      let max = 900;
+      let w = img.width, h = img.height;
+      if(w > max){ h = h * max / w; w = max; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      fotoBase64 = canvas.toDataURL("image/jpeg", 0.8);
+      let prev = document.getElementById("previewFoto");
+      prev.src = fotoBase64;
+      prev.style.display = "block";
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function publicar(){
+  let empresa = document.getElementById("pubEmpresa").value;
+  let texto = document.getElementById("pubTexto").value;
+  if(!fotoBase64){ alert("Escolhe a foto primeiro!"); return; }
+  let lista = JSON.parse(localStorage.getItem("publicacoes") || "[]");
+  lista.unshift({empresa: empresa, texto: texto, foto: fotoBase64, data: new Date().toLocaleDateString("pt-BR")});
+  try{ localStorage.setItem("publicacoes", JSON.stringify(lista)); }
+  catch(e){ alert("Foto muito pesada, tenta outra menor!"); return; }
+  alert("Foto publicada para " + empresa + "!");
+  document.getElementById("pubTexto").value = "";
+  document.getElementById("pubFoto").value = "";
+  document.getElementById("previewFoto").style.display = "none";
+  fotoBase64 = "";
+  carregarPub();
+}
+function carregarPub(){
+  let lista = JSON.parse(localStorage.getItem("publicacoes") || "[]");
+  let div = document.getElementById("listaPub");
+  div.innerHTML = "";
+  lista.forEach((p,i)=>{
+    div.innerHTML += '<div class="card"><b>'+p.empresa+'</b><p class="assunto">'+ (p.data||"") +'</p><img src="'+p.foto+'"><p>'+ (p.texto||"") +'</p><button class="apagar" onclick="apagarPub('+i+')">APAGAR</button></div>';
+  });
+}
+function apagarPub(i){
+  let lista = JSON.parse(localStorage.getItem("publicacoes") || "[]");
+  lista.splice(i,1); localStorage.setItem("publicacoes", JSON.stringify(lista)); carregarPub();
+}
+let toques = 0, timer = null;
+document.getElementById("logo").addEventListener("click", ()=>{
+  toques++; clearTimeout(timer); timer = setTimeout(()=>{ toques = 0; }, 800);
+  if(toques==3){
+    toques = 0;
+    mostrar("tela3");
+    mostrarAba('msg');
+    carregarADM();
+  }
+});
+</script>
+</body>
+</html>
