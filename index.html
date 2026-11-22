@@ -10,23 +10,19 @@
   body{background:white;height:100vh;display:flex;flex-direction:column}
   .tela{display:none;flex-direction:column;height:100vh}
   .tela.ativa{display:flex}
-
   .topo-vazio{height:70px;width:100%}
   .meio{flex:1;display:flex;flex-direction:column;justify-content:center;padding-left:38px;gap:18px}
   .btn-click{background:var(--azul);color:white;border:none;border-radius:3px;width:225px;height:68px;font-size:25px;font-weight:900;letter-spacing:-0.5px;text-align:left;padding-left:20px;cursor:pointer}
   .btn-centro{background:var(--azul);color:white;border:none;border-radius:3px;width:225px;height:68px;font-size:25px;font-weight:900;letter-spacing:-0.5px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-
-  .topo-azul{background:var(--azul);color:white;display:flex;align-items:center;height:60px;padding:0 14px;gap:16px;user-select:none}
+  .topo-azul{background:var(--azul);color:white;display:flex;align-items:center;height:60px;padding:0 14px;gap:16px;user-select:none;position:relative;z-index:10000}
   .voltar{cursor:pointer;display:flex;align-items:center}
   .topo-azul h1{font-size:22px;font-weight:900;letter-spacing:-0.5px}
-
   .form{flex:1;padding:32px 28px 15px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
   .form label{font-size:20px;font-weight:900;letter-spacing:-0.5px}
   .form input, .form select{border:none;border-bottom:3px solid black;outline:none;font-size:17px;padding:6px 4px;width:100%;font-weight:800;background:white}
   .caixa-msg{border:4px solid black;border-radius:32px 4px 32px 32px;height:140px;padding:14px;margin-top:12px}
   .caixa-msg textarea{width:100%;height:100%;border:none;outline:none;font-size:18px;font-weight:900;resize:none}
   .btn-enviar{background:var(--azul);color:white;border:none;height:60px;font-size:20px;font-weight:900;cursor:pointer;width:100%}
-
   .lista{flex:1;padding:20px 20px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
   .card{border:3px solid black;border-radius:18px 4px 18px 18px;padding:14px}
   .card b{font-size:18px}
@@ -34,29 +30,24 @@
   .card .assunto{color:#333}
   .card img{width:100%;height:auto;border-radius:10px;margin-top:10px;display:block}
   .apagar{background:#ff3b30;color:white;border:none;border-radius:3px;padding:8px 16px;font-size:15px;font-weight:900;margin-top:10px;cursor:pointer}
-
   .adm-botoes{display:flex;gap:12px;padding:16px 20px 0}
   .adm-btn{flex:1;height:52px;border:none;border-radius:8px;font-size:18px;font-weight:900;cursor:pointer;background:#e8e8e8;color:#333}
   .adm-btn.ativo{background:var(--azul);color:white}
-
   .btn-foto{background:white;border:3px dashed var(--azul);color:var(--azul);border-radius:12px;height:120px;font-size:18px;font-weight:900;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;margin-top:8px}
   .btn-foto span{font-size:32px}
   #previewFoto{width:100%;height:auto;border-radius:12px;margin-top:10px;display:none;border:2px solid #e5e5e5}
-
   .empresas-lista{flex:1;overflow-y:auto;padding:18px 20px 10px;display:flex;flex-direction:column;gap:14px}
   .emp{width:100%;background:white;border:2px solid #e5e5e5;border-radius:12px;padding:16px 14px;display:flex;align-items:center;cursor:pointer;text-align:left}
   .emp-nome{font-size:19px;font-weight:900;letter-spacing:-0.5px}
-
-  /* FOTOS DA EMPRESA */
   .fotos-lista{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px}
   .foto-card{border:2px solid #e5e5e5;border-radius:12px;padding:12px}
   .foto-card img{width:100%;height:auto;border-radius:10px;display:block}
   .foto-card p{font-size:16px;font-weight:700;margin-top:8px;word-break:break-word}
-
   #overlay{position:fixed;top:60px;bottom:0;left:0;right:0;background:white;display:none;flex-direction:column;justify-content:center;align-items:center;z-index:9999}
   .girando{width:44px;height:44px;border:5px solid #ddd;border-top:5px solid var(--azul);border-radius:50%;animation:girar 0.8s linear infinite}
   @keyframes girar{to{transform:rotate(360deg)}}
   #overlay p{font-size:18px;font-weight:900;margin-top:14px}
+  #statusPub{font-size:16px;font-weight:800;margin-top:10px;word-break:break-word}
 </style>
 </head>
 <body>
@@ -64,14 +55,14 @@
 <div id="tela1" class="tela ativa">
   <div class="topo-vazio" id="logo"></div>
   <div class="meio">
-    <button class="btn-click" onclick="abrirFale()">Fale Conosco</button>
-    <button class="btn-centro" onclick="abrirEmpresas()">Empresas</button>
+    <button class="btn-click" id="btnFale">Fale Conosco</button>
+    <button class="btn-centro" id="btnEmpresas">Empresas</button>
   </div>
 </div>
 
 <div id="tela2" class="tela">
   <div class="topo-azul">
-    <span class="voltar" onclick="voltarPara1()">
+    <span class="voltar" data-voltar="1">
       <svg width="26" height="20" viewBox="0 0 34 28" fill="none"><path d="M32 14H6M6 14L18 3M6 14L18 25" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </span>
     <h1>Fale Conosco</h1>
@@ -83,49 +74,41 @@
     <input id="assunto" type="text">
     <div class="caixa-msg"><textarea id="mensagem" placeholder="Mensagem..."></textarea></div>
   </div>
-  <button class="btn-enviar" onclick="enviar()">ENVIAR</button>
+  <button class="btn-enviar" id="btnEnviar">ENVIAR</button>
 </div>
 
 <div id="tela3" class="tela">
   <div class="topo-azul">
-    <span class="voltar" onclick="voltarPara1()">
+    <span class="voltar" data-voltar="1">
       <svg width="26" height="20" viewBox="0 0 34 28" fill="none"><path d="M32 14H6M6 14L18 3M6 14L18 25" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </span>
     <h1>ADM</h1>
   </div>
   <div class="adm-botoes">
-    <button class="adm-btn ativo" id="btnMsg" onclick="mostrarAba('msg')">Mensagens</button>
-    <button class="adm-btn" id="btnPub" onclick="mostrarAba('pub')">Publicar</button>
+    <button class="adm-btn ativo" id="btnMsg">Mensagens</button>
+    <button class="adm-btn" id="btnPub">Publicar</button>
   </div>
   <div class="lista" id="listaMsg"></div>
   <div class="form" id="formPub" style="display:none">
-    <label>Foto do ônibus:</label>
-    <input type="file" id="pubFoto" accept="image/*" style="display:none" onchange="verFoto(this)">
-    <div class="btn-foto" onclick="document.getElementById('pubFoto').click()"><span>📷</span>TOCAR PARA ESCOLHER FOTO</div>
+    <label>Token do GitHub:</label>
+    <input type="password" id="tokenGithub" placeholder="Cole seu token aqui" autocomplete="off">
+    <label style="margin-top:14px">Foto do ônibus:</label>
+    <input type="file" id="pubFoto" accept="image/*" style="display:none">
+    <div class="btn-foto" id="btnEscolherFoto"><span>📷</span>TOCAR PARA ESCOLHER FOTO</div>
     <img id="previewFoto">
     <label style="margin-top:14px">Publicar para qual empresa?</label>
-    <select id="pubEmpresa">
-      <option>Viação São José</option>
-      <option>Vera Cruz</option>
-      <option>Linave</option>
-      <option>Mirante</option>
-      <option>Nilopolitana</option>
-      <option>Expresso Nossa Senhora da Glória</option>
-      <option>Empresa de Transportes Flores</option>
-      <option>Evanil</option>
-      <option>Transportes Blanco</option>
-      <option>Viação Nossa Senhora da Penha</option>
-    </select>
+    <select id="pubEmpresa"></select>
     <label style="margin-top:14px">Título / Descrição:</label>
     <div class="caixa-msg"><textarea id="pubTexto" placeholder="Ex: São José RJ 200.015 no Terminal..."></textarea></div>
-    <button class="btn-enviar" onclick="publicar()" style="margin-top:12px">PUBLICAR FOTO</button>
+    <button class="btn-enviar" id="btnPublicar" style="margin-top:12px">PUBLICAR FOTO</button>
+    <p id="statusPub"></p>
     <div id="listaPub" style="margin-top:14px;display:flex;flex-direction:column;gap:12px"></div>
   </div>
 </div>
 
 <div id="tela5" class="tela">
   <div class="topo-azul" id="topoEmpresas">
-    <span class="voltar" onclick="voltarPara1()">
+    <span class="voltar" data-voltar="1">
       <svg width="26" height="20" viewBox="0 0 34 28" fill="none"><path d="M32 14H6M6 14L18 3M6 14L18 25" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </span>
     <h1>Empresas</h1>
@@ -135,7 +118,7 @@
 
 <div id="tela6" class="tela">
   <div class="topo-azul">
-    <span class="voltar" onclick="voltarEmpresas()">
+    <span class="voltar" id="voltarEmpresasBtn">
       <svg width="26" height="20" viewBox="0 0 34 28" fill="none"><path d="M32 14H6M6 14L18 3M6 14L18 25" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </span>
     <h1 id="tituloEmpresa">Empresa</h1>
@@ -146,109 +129,171 @@
 <div id="overlay"><div class="girando"></div><p id="textoLoop">Carregando...</p></div>
 
 <script>
-const empresas = [
-  "Viação São José",
-  "Vera Cruz",
-  "Linave",
-  "Mirante",
-  "Nilopolitana",
-  "Expresso Nossa Senhora da Glória",
-  "Empresa de Transportes Flores",
-  "Evanil",
-  "Transportes Blanco",
-  "Viação Nossa Senhora da Penha",
-];
+console.log("JS CARREGOU");
+const empresas = ["Viação São José","Vera Cruz","Linave","Mirante","Nilopolitana","Expresso Nossa Senhora da Glória","Empresa de Transportes Flores","Evanil","Transportes Blanco","Viação Nossa Senhora da Penha","Viação Ponte Coberta","Viação Real Rio","Viação Beira Mar","Viação Vila Rica","Viação Progresso","Viação Normandy","Viação Santa Cruz","Viação Rubanil","Viação Tinguá","Viação São João","Viação União","Viação Pavunense","Viação Oeste","Viação Caprichosa","Viação Mauá"];
+const sel = document.getElementById("pubEmpresa");
+empresas.forEach(n => { const o = document.createElement("option"); o.value = n; o.textContent = n; sel.appendChild(o); });
+
 function renderEmpresas(){
   let div = document.getElementById("listaEmpresas");
   div.innerHTML = "";
   empresas.forEach(nome=>{
-    div.innerHTML += '<div class="emp" onclick="abrirEmpresa(\''+nome+'\')"><div class="emp-nome">'+nome+'</div></div>';
+    const d = document.createElement("div");
+    d.className = "emp";
+    d.innerHTML = '<div class="emp-nome"></div>';
+    d.querySelector(".emp-nome").textContent = nome;
+    d.addEventListener("click", ()=> abrirEmpresa(nome));
+    div.appendChild(d);
   });
 }
 renderEmpresas();
 
-function abrirEmpresa(nome){
-  document.getElementById("tituloEmpresa").textContent = nome;
-  let lista = JSON.parse(localStorage.getItem("publicacoes") || "[]");
-  let filtradas = lista.filter(p=>p.empresa==nome);
-  let div = document.getElementById("fotosEmpresa");
-  if(filtradas.length==0){ div.innerHTML = ""; return; }
-  div.innerHTML = "";
-  filtradas.forEach(p=>{
-    div.innerHTML += '<div class="foto-card"><img src="'+p.foto+'"><p>'+(p.texto||"")+'</p></div>';
-  });
-  mostrar("tela6");
+function getRepoInfo(){
+  const h = window.location.hostname || "";
+  if(h.includes("github.io")){
+    const owner = h.split(".")[0];
+    const parts = window.location.pathname.split("/").filter(Boolean);
+    return { owner, repo: parts[0] || "lmlp" };
+  }
+  return { owner: "k52978", repo: "lmlp" };
 }
-function voltarEmpresas(){ mostrar("tela5"); }
-
-function pararLoopVisual(){
-  document.getElementById("overlay").style.display = "none";
+function getBranch(){ return "main"; }
+let statusTravadoGlobal = false;
+async function buscarStatusTravado(){
+  const { owner, repo } = getRepoInfo();
+  try{
+    const c = new AbortController();
+    const t = setTimeout(()=>c.abort(), 2500);
+    const resp = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${getBranch()}/status.json?t=${Date.now()}`, { signal: c.signal });
+    clearTimeout(t);
+    if(!resp.ok) return false;
+    const dados = await resp.json();
+    return dados.travado === true;
+  }catch(e){ return false; }
+}
+function mostrarLoop(){
   document.getElementById("textoLoop").style.display = "block";
+  document.getElementById("overlay").style.display = "flex";
+}
+function esconderLoop(){ document.getElementById("overlay").style.display = "none"; }
+buscarStatusTravado().then(v=>{ statusTravadoGlobal = v; esconderLoop(); });
+
+async function salvarStatusTravado(novoValor){
+  let token = document.getElementById("tokenGithub").value.trim();
+  if(!token){
+    token = prompt("Cole seu Token do GitHub para travar/destravar:");
+    if(!token) return false;
+    document.getElementById("tokenGithub").value = token;
+  }
+  const { owner, repo } = getRepoInfo();
+  const headers = { "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json", "Content-Type": "application/json" };
+  const baseUrl = `https://api.github.com/repos/${owner}/${repo}/contents`;
+  try{
+    const getAtual = await fetch(`${baseUrl}/status.json`, { headers });
+    let sha = null;
+    if(getAtual.status === 200){ const dados = await getAtual.json(); sha = dados.sha; }
+    const conteudo = btoa(unescape(encodeURIComponent(JSON.stringify({ travado: novoValor }, null, 2))));
+    const up = await fetch(`${baseUrl}/status.json`, {
+      method: "PUT", headers,
+      body: JSON.stringify({ message: novoValor ? "Travar site" : "Destravar site", content: conteudo, ...(sha ? { sha } : {}) })
+    });
+    if(!up.ok){ const err = await up.json().catch(()=>({})); throw new Error(err.message || up.status); }
+    statusTravadoGlobal = novoValor;
+    return true;
+  }catch(e){ alert("Erro ao salvar status: " + e.message); return false; }
+}
+async function buscarAcervo(){
+  const { owner, repo } = getRepoInfo();
+  try{
+    const resp = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${getBranch()}/acervo.json?t=${Date.now()}`);
+    if(!resp.ok) return [];
+    const lista = await resp.json();
+    return Array.isArray(lista) ? lista : [];
+  }catch(e){ return []; }
+}
+function abrirEmpresa(nome){
+  if(statusTravadoGlobal){ mostrarLoop(); return; }
+  document.getElementById("tituloEmpresa").textContent = nome;
+  const div = document.getElementById("fotosEmpresa");
+  div.innerHTML = "<p style='font-weight:800'>Carregando fotos...</p>";
+  mostrar("tela6");
+  buscarAcervo().then(lista=>{
+    const { owner, repo } = getRepoInfo();
+    const filtradas = lista.filter(p => p.empresa === nome);
+    if(filtradas.length === 0){ div.innerHTML = "<p>Nenhuma foto ainda.</p>"; return; }
+    div.innerHTML = "";
+    filtradas.reverse().forEach(p=>{
+      const card = document.createElement("div");
+      card.className = "foto-card";
+      const img = document.createElement("img");
+      img.src = `https://raw.githubusercontent.com/${owner}/${repo}/${getBranch()}/${p.imagem}`;
+      img.alt = p.legenda || p.empresa;
+      const txt = document.createElement("p");
+      txt.textContent = p.legenda || "";
+      card.appendChild(img); card.appendChild(txt); div.appendChild(card);
+    });
+  });
 }
 function mostrar(id){
   document.querySelectorAll(".tela").forEach(t=>t.classList.remove("ativa"));
   document.getElementById(id).classList.add("ativa");
 }
-function abrirFale(){ mostrar("tela2"); }
-function voltarPara1(){
-  // Setinha só volta, NÃO destrava o loop travado
-  // Se o loop tiver travado, ele continua travado pro visitante
-  pararLoopVisual();
-  mostrar("tela1");
-}
-
-// LOOP TRAVADO - salvo, fica pra todo mundo até tu destravar
-function estaTravado(){ return localStorage.getItem("loopTravado")=="1"; }
+function abrirFale(){ esconderLoop(); mostrar("tela2"); }
+function voltarPara1(){ if(!statusTravadoGlobal) esconderLoop(); mostrar("tela1"); }
 function abrirEmpresas(){
   mostrar("tela5");
+  if(statusTravadoGlobal){ mostrarLoop(); return; }
   document.getElementById("textoLoop").style.display = "none";
   document.getElementById("overlay").style.display = "flex";
-  if(estaTravado()){
-    // TRAVADO: não tem setTimeout, fica girando pra sempre
-    return;
-  }
-  setTimeout(()=>{
-    if(!estaTravado()){
-      document.getElementById("overlay").style.display = "none";
-      document.getElementById("textoLoop").style.display = "block";
-    }
-  }, 900);
+  setTimeout(()=>{ if(!statusTravadoGlobal){ document.getElementById("overlay").style.display = "none"; document.getElementById("textoLoop").style.display = "block"; } }, 900);
+  buscarStatusTravado().then(v=>{ statusTravadoGlobal = v; if(v) mostrarLoop(); });
 }
-// 2 CLIQUES NO TOPO = TRAVA / DESTRAVA - só tu sabe
+
+// LIGAÇÕES POR addEventListener - funciona no Acode e no navegador
+document.getElementById("btnFale").addEventListener("click", abrirFale);
+document.getElementById("btnEmpresas").addEventListener("click", abrirEmpresas);
+document.getElementById("btnEnviar").addEventListener("click", enviar);
+document.getElementById("btnPublicar").addEventListener("click", publicar);
+document.getElementById("btnMsg").addEventListener("click", ()=>mostrarAba('msg'));
+document.getElementById("btnPub").addEventListener("click", ()=>mostrarAba('pub'));
+document.getElementById("btnEscolherFoto").addEventListener("click", ()=>document.getElementById('pubFoto').click());
+document.getElementById("pubFoto").addEventListener("change", function(){ verFoto(this); });
+document.getElementById("voltarEmpresasBtn").addEventListener("click", ()=>mostrar("tela5"));
+document.querySelectorAll("[data-voltar]").forEach(el=>{ el.addEventListener("click", voltarPara1); });
+
 let cliquesTopo = 0, timerTopo = null;
-document.getElementById("topoEmpresas").addEventListener("click", (e)=>{
+document.getElementById("topoEmpresas").addEventListener("click", async (e)=>{
   if(e.target.closest(".voltar")) return;
   cliquesTopo++;
   clearTimeout(timerTopo);
   timerTopo = setTimeout(()=>{ cliquesTopo = 0; }, 400);
   if(cliquesTopo >= 2){
     cliquesTopo = 0;
-    if(estaTravado()){
-      localStorage.setItem("loopTravado","0");
-      alert("Loop destravado! Agora volta ao normal.");
-      pararLoopVisual();
+    const atual = await buscarStatusTravado();
+    statusTravadoGlobal = atual;
+    if(atual){
+      const ok = await salvarStatusTravado(false);
+      if(ok){ alert("Loop destravado!"); esconderLoop(); }
     } else {
-      localStorage.setItem("loopTravado","1");
-      document.getElementById("textoLoop").style.display = "none";
-      document.getElementById("overlay").style.display = "flex";
-      alert("Loop travado! Vai ficar girando pro visitante até tu destravar.");
+      const ok = await salvarStatusTravado(true);
+      if(ok){ mostrarLoop(); alert("Loop travado pra TODO MUNDO!"); }
     }
   }
 });
-// Visitante tocar no giro NÃO para mais quando tá travado
-document.getElementById("overlay").addEventListener("click", ()=>{
-  if(!estaTravado()) pararLoopVisual();
-});
+document.getElementById("overlay").addEventListener("click", ()=>{ if(!statusTravadoGlobal) esconderLoop(); });
 
 function enviar(){
-  let nome = document.getElementById("nome").value;
-  let assunto = document.getElementById("assunto").value;
-  let msg = document.getElementById("mensagem").value;
+  let nome = document.getElementById("nome").value.trim();
+  let assunto = document.getElementById("assunto").value.trim();
+  let msg = document.getElementById("mensagem").value.trim();
   if(!nome || !msg){ alert("Preenche o nome e a mensagem!"); return; }
+  const emailDestino = "sac.niphtbus@gmail.com";
+  const assuntoEmail = encodeURIComponent((assunto || "Fale Conosco") + " - " + nome);
+  const corpoEmail = encodeURIComponent("Nome: " + nome + "\nAssunto: " + (assunto || "-") + "\n\nMensagem:\n" + msg);
+  window.location.href = `mailto:${emailDestino}?subject=${assuntoEmail}&body=${corpoEmail}`;
   let lista = JSON.parse(localStorage.getItem("mensagens") || "[]");
   lista.push({nome: nome, assunto: assunto, msg: msg});
   localStorage.setItem("mensagens", JSON.stringify(lista));
-  alert("Enviado!");
   document.getElementById("nome").value = "";
   document.getElementById("assunto").value = "";
   document.getElementById("mensagem").value = "";
@@ -267,16 +312,26 @@ function carregarADM(){
   let div = document.getElementById("listaMsg");
   if(lista.length==0){ div.innerHTML = ""; return; }
   div.innerHTML = "";
-  lista.forEach((m,i)=>{ div.innerHTML += '<div class="card"><b>'+m.nome+'</b><p class="assunto">Assunto: '+ (m.assunto||"-") +'</p><p>'+m.msg+'</p><button class="apagar" onclick="apagar('+i+')">APAGAR</button></div>'; });
+  lista.forEach((m,i)=>{
+    const c = document.createElement("div"); c.className="card";
+    c.innerHTML = "<b></b><p class='assunto'></p><p></p>";
+    c.querySelector("b").textContent = m.nome;
+    c.querySelector(".assunto").textContent = "Assunto: " + (m.assunto||"-");
+    c.querySelectorAll("p")[1].textContent = m.msg;
+    const btn = document.createElement("button"); btn.className="apagar"; btn.textContent="APAGAR"; btn.onclick=()=>apagar(i);
+    c.appendChild(btn); div.appendChild(c);
+  });
 }
 function apagar(i){
   let lista = JSON.parse(localStorage.getItem("mensagens") || "[]");
   lista.splice(i,1); localStorage.setItem("mensagens", JSON.stringify(lista)); carregarADM();
 }
 let fotoBase64 = "";
+let fotoNomeOriginal = "foto.jpg";
 function verFoto(input){
   let file = input.files[0];
   if(!file) return;
+  fotoNomeOriginal = file.name;
   let reader = new FileReader();
   reader.onload = function(e){
     let img = new Image();
@@ -296,43 +351,33 @@ function verFoto(input){
   };
   reader.readAsDataURL(file);
 }
-function publicar(){
-  let empresa = document.getElementById("pubEmpresa").value;
-  let texto = document.getElementById("pubTexto").value;
+async function publicar(){
+  const status = document.getElementById("statusPub");
+  const token = document.getElementById("tokenGithub").value.trim();
+  const empresa = document.getElementById("pubEmpresa").value;
+  const legenda = document.getElementById("pubTexto").value;
+  if(!token){ alert("Cola o Token do GitHub primeiro!"); return; }
   if(!fotoBase64){ alert("Escolhe a foto primeiro!"); return; }
-  let lista = JSON.parse(localStorage.getItem("publicacoes") || "[]");
-  lista.unshift({empresa: empresa, texto: texto, foto: fotoBase64, data: new Date().toLocaleDateString("pt-BR")});
-  try{ localStorage.setItem("publicacoes", JSON.stringify(lista)); }
-  catch(e){ alert("Foto muito pesada, tenta outra menor!"); return; }
-  alert("Foto publicada para " + empresa + "!");
-  document.getElementById("pubTexto").value = "";
-  document.getElementById("pubFoto").value = "";
-  document.getElementById("previewFoto").style.display = "none";
-  fotoBase64 = "";
-  carregarPub();
-}
-function carregarPub(){
-  let lista = JSON.parse(localStorage.getItem("publicacoes") || "[]");
-  let div = document.getElementById("listaPub");
-  div.innerHTML = "";
-  lista.forEach((p,i)=>{
-    div.innerHTML += '<div class="card"><b>'+p.empresa+'</b><p class="assunto">'+ (p.data||"") +'</p><img src="'+p.foto+'"><p>'+ (p.texto||"") +'</p><button class="apagar" onclick="apagarPub('+i+')">APAGAR</button></div>';
-  });
-}
-function apagarPub(i){
-  let lista = JSON.parse(localStorage.getItem("publicacoes") || "[]");
-  lista.splice(i,1); localStorage.setItem("publicacoes", JSON.stringify(lista)); carregarPub();
-}
-let toques = 0, timer = null;
-document.getElementById("logo").addEventListener("click", ()=>{
-  toques++; clearTimeout(timer); timer = setTimeout(()=>{ toques = 0; }, 800);
-  if(toques==3){
-    toques = 0;
-    mostrar("tela3");
-    mostrarAba('msg');
-    carregarADM();
-  }
-});
-</script>
-</body>
-</html>
+  const { owner, repo } = getRepoInfo();
+  const headers = { "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json", "Content-Type": "application/json" };
+  const baseUrl = `https://api.github.com/repos/${owner}/${repo}/contents`;
+  try{
+    status.textContent = "Enviando foto...";
+    const apenasBase64 = fotoBase64.split(",")[1];
+    const nomeArquivo = Date.now() + "-" + fotoNomeOriginal.replace(/\s/g, "-").replace(/[^a-zA-Z0-9._-]/g, "");
+    const caminhoImagem = `imagens/${nomeArquivo}`;
+    const upFoto = await fetch(`${baseUrl}/${caminhoImagem}`, {
+      method: "PUT", headers,
+      body: JSON.stringify({ message: "Nova foto " + empresa, content: apenasBase64 })
+    });
+    if(!upFoto.ok){ const err = await upFoto.json().catch(()=>({})); throw new Error("Erro ao enviar foto: " + (err.message || upFoto.status)); }
+    status.textContent = "Atualizando acervo...";
+    const getAcervo = await fetch(`${baseUrl}/acervo.json`, { headers });
+    let lista = [];
+    let sha = null;
+    if(getAcervo.status === 200){
+      const dados = await getAcervo.json();
+      sha = dados.sha;
+      try{ lista = JSON.parse(atob(dados.content.replace(/\n/g, ""))); }catch(e){ lista = []; }
+      if(!Array.isArray(lista)) lista = [];
+    } else if(getAcervo.status === 404){ lista = [];
