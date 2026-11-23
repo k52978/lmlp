@@ -297,8 +297,16 @@ async function publicar(){
     if(getAcervo.status === 200){
       const dados = await getAcervo.json();
       sha = dados.sha;
-      try{ lista = JSON.parse(atob(dados.content.replace(/\n/g, ""))); }catch(e){ lista = []; }
-      if(!Array.isArray(lista)) lista = [];
+      if(!dados.content || !sha) throw new Error("Não foi possível ler o acervo existente com segurança. Nenhuma foto antiga foi substituída.");
+      try{
+        const binario = atob(dados.content.replace(/\s/g, ""));
+        const bytes = Uint8Array.from(binario, caractere => caractere.charCodeAt(0));
+        const textoAcervo = new TextDecoder("utf-8").decode(bytes).replace(/^\uFEFF/, "");
+        lista = JSON.parse(textoAcervo);
+      }catch(e){
+        throw new Error("O acervo existente não pôde ser interpretado. Para proteger as fotos antigas, a publicação foi interrompida sem limpar o arquivo. Detalhe: " + e.message);
+      }
+      if(!Array.isArray(lista)) throw new Error("O formato do acervo existente é inválido. Para proteger as fotos antigas, a publicação foi interrompida.");
     } else if(getAcervo.status === 404){ lista = []; }
     else { const err = await getAcervo.json().catch(()=>({})); throw new Error("Erro ao ler acervo: " + (err.message || getAcervo.status)); }
     lista.push({ empresa: empresa, legenda: legenda, imagem: caminhoImagem, data: new Date().toISOString() });
