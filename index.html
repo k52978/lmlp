@@ -82,8 +82,9 @@
     <div class="caixa-msg"><textarea id="mensagem" placeholder="Mensagem..."></textarea></div>
   </div>
   <button class="btn-enviar" id="btnEnviar">ENVIAR</button>
-  <div id="statusEnvio" style="font-size:16px;font-weight:900;text-align:center;margin-top:4px;min-height:24px;color:#0474E4"></div>
-  <iframe name="web3forms_frame" id="web3forms_frame" style="display:none;width:0;height:0;border:0"></iframe>
+  <div id="statusEnvio" style="font-size:16px;font-weight:900;text-align:center;margin-top:4px;min-height:24px;color:#0474E4;word-break:break-word;padding:0 20px"></div>
+  <div style="font-size:13px;font-weight:900;text-align:center;margin-top:10px;color:#666">Resposta do Web3Forms (pra teste):</div>
+  <iframe name="web3forms_frame" id="web3forms_frame" style="display:block;width:100%;height:110px;border:2px solid #e5e5e5;border-radius:10px;margin:8px auto 0 auto;background:#f9f9f9"></iframe>
   <form id="formWeb3" action="https://api.web3forms.com/submit" method="POST" target="web3forms_frame" style="display:none">
     <input type="hidden" name="access_key" value="9fb609d6-5055-47a9-9961-81eca17fb747">
     <input type="hidden" name="from_name" value="Nova Iguaçu PHOTOBUS">
@@ -283,19 +284,15 @@ function enviar(){
   document.getElementById("w3_subject").value = (assunto || "Fale Conosco") + " - " + nome;
   document.getElementById("w3_message").value = "Nome: " + nome + "\nAssunto: " + (assunto || "-") + "\n\nMensagem:\n" + msg;
   document.getElementById("formWeb3").submit();
+  // NÃO confirma sozinho: espera você ver a resposta do Web3Forms na caixinha
   setTimeout(()=>{
-    btn.textContent = "ENVIADO!";
-    if(status) status.textContent = "Enviado!";
+    btn.textContent = "ENVIAR";
+    enviando = false;
+    if(status) status.textContent = "Olha a caixinha abaixo: se disser Success / Sucesso, chegou. Se disser erro, me manda o print dela.";
     document.getElementById("nome").value = "";
     document.getElementById("assunto").value = "";
     document.getElementById("mensagem").value = "";
-    setTimeout(()=>{
-      enviando = false;
-      btn.textContent = "ENVIAR";
-      if(status) status.textContent = "";
-      voltarPara1();
-    }, 2000);
-  }, 800);
+  }, 1500);
 }
 let fotoBase64 = "";
 let fotoNomeOriginal = "foto.jpg";
