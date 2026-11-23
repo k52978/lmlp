@@ -1,14 +1,20 @@
 [
   {
-    "empresa": "ViaÃ§Ã£o SÃ£o JosÃ©",
+    "empresa": "ViaÃÂ§ÃÂ£o SÃÂ£o JosÃÂ©",
     "legenda": "RJ 200.109",
     "imagem": "imagens/1795389519792-IMG_20260724_151304.png",
     "data": "2026-11-22T23:18:41.843Z"
   },
   {
-    "empresa": "Viação São José",
+    "empresa": "ViaÃ§Ã£o SÃ£o JosÃ©",
     "legenda": "A01004",
     "imagem": "imagens/1795395662875-inbound3966800935423874013.jpg",
     "data": "2026-11-23T01:01:05.103Z"
+  },
+  {
+    "empresa": "Viação São José",
+    "legenda": "RJ 200.107\n134I - Nova Iguaçu - Duque De Caxias (POSSE)",
+    "imagem": "imagens/1795396793829-inbound2366318005552172449.jpg",
+    "data": "2026-11-23T01:19:56.123Z"
   }
 ]
