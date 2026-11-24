@@ -51,12 +51,10 @@
   .foto-card img{width:100%;height:auto;border-radius:10px;display:block}
   .foto-card p{font-size:16px;font-weight:700;margin-top:8px;word-break:break-word}
   #statusPub{font-size:16px;font-weight:800;margin-top:10px;word-break:break-word;text-align:center}
-  /* LOOP DO MEULARANJINHA NA ABA EMPRESAS: 48.41px, cor #0474E4 */
+  /* LOOP NA ABA EMPRESAS: 48.41px, cor #0474E4, visivel so por 1s */
   #loopEmpresas{position:fixed;top:142px;bottom:0;left:0;right:0;background:white;display:none;flex-direction:column;justify-content:center;align-items:center;z-index:9999}
-  .spinner-svg{width:48.41px;height:48.41px;animation:rotacionar 1.91s linear infinite}
-  .spinner-circle{fill:none;stroke:#0474E4;stroke-width:4.95;stroke-linecap:butt;animation:moldar-arco 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite}
-  @keyframes rotacionar{100%{transform:rotate(360deg)}}
-  @keyframes moldar-arco{0%{stroke-dasharray:6, 200;stroke-dashoffset:0}50%{stroke-dasharray:100, 200;stroke-dashoffset:-15}100%{stroke-dasharray:6, 200;stroke-dashoffset:-120}}
+  .detro-loader-container{display:inline-flex;align-items:center;justify-content:center}
+  #detro-native-canvas{display:block;width:48.41px;height:48.41px}
 </style>
 </head>
 <body>
@@ -143,10 +141,75 @@
 </div>
 
 <div id="loopEmpresas">
-  <svg class="spinner-svg" viewBox="24.25 24.25 51.5 51.5">
-    <circle class="spinner-circle" cx="50" cy="50" r="20"></circle>
-  </svg>
+  <div class="detro-loader-container">
+    <canvas id="detro-native-canvas" width="48.41" height="48.41"></canvas>
+  </div>
 </div>
+<script>
+(function () {
+  const canvas = document.getElementById('detro-native-canvas');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const size = 48.41;
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+  ctx.scale(dpr, dpr);
+  const center = size / 2;
+  const radius = 17.6;
+  const lineWidth = 3.96;
+  const color = '#0474E4';
+  function cubicBezier(t) {
+    const p1x = 0.4, p1y = 0.0, p2x = 0.2, p2y = 1.0;
+    let u = t;
+    for (let i = 0; i < 6; i++) {
+      const x = 3 * (1 - u) * (1 - u) * u * p1x + 3 * (1 - u) * u * u * p2x + u * u * u;
+      const dx = 3 * (1 - u) * (1 - u) * p1x + 6 * (1 - u) * u * (p2x - p1x) + 3 * u * u * (1 - p2x);
+      if (Math.abs(dx) < 1e-6) break;
+      u -= (x - t) / dx;
+    }
+    return 3 * (1 - u) * (1 - u) * u * p1y + 3 * (1 - u) * u * u * p2y + u * u * u;
+  }
+  function interval(t, begin, end) {
+    if (t <= begin) return 0;
+    if (t >= end) return 1;
+    return cubicBezier((t - begin) / (end - begin));
+  }
+  const velocidadeGeral = 0.95;
+  const kIndeterminateCircularDuration = (1333 * 5) / velocidadeGeral;
+  const twoPi = Math.PI * 2;
+  const epsilon = 0.180018;
+  function render(now) {
+    ctx.clearRect(0, 0, size, size);
+    const t = (now % kIndeterminateCircularDuration) / kIndeterminateCircularDuration;
+    let headValue = 0;
+    let tailValue = 0;
+    let stepValue = 0;
+    for (let i = 0; i < 5; i++) {
+      const start = i * 0.2;
+      const end = (i + 1) * 0.2;
+      const mid = start + 0.09;
+      if (t >= start) {
+        headValue += interval(t, start, mid);
+        tailValue += interval(t, mid, end);
+        stepValue += interval(t, start, end);
+      }
+    }
+    const rotationValue = t * 3;
+    const startAngle = rotationValue * twoPi + tailValue * (twoPi * 0.75) + stepValue * (twoPi * 0.25);
+    const arcSweep = Math.max(headValue * (twoPi * 0.75) - tailValue * (twoPi * 0.75), epsilon);
+    ctx.beginPath();
+    ctx.arc(center, center, radius, startAngle, startAngle + arcSweep);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = 'butt';
+    ctx.stroke();
+    requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+})();
+</script>
 
 <script>
 const empresas = [
@@ -291,7 +354,8 @@ function abrirEmpresas(){
   renderEmpresas();
   const loop = document.getElementById("loopEmpresas");
   loop.style.display = "flex";
-  setTimeout(()=>{ loop.style.display = "none"; }, 1200);
+  clearTimeout(window._loopTimer);
+  window._loopTimer = setTimeout(()=>{ loop.style.display = "none"; }, 1000);
 }
 
 document.getElementById("pesquisaEmpresas").addEventListener("input", renderEmpresas);
@@ -301,7 +365,7 @@ document.getElementById("btnEnviar").addEventListener("click", enviar);
 document.getElementById("btnPublicar").addEventListener("click", publicar);
 document.getElementById("btnEscolherFoto").addEventListener("click", ()=>document.getElementById('pubFoto').click());
 document.getElementById("pubFoto").addEventListener("change", function(){ verFoto(this); });
-document.getElementById("voltarEmpresasBtn").addEventListener("click", ()=>{ mostrar("tela5"); const l=document.getElementById("loopEmpresas"); l.style.display="flex"; setTimeout(()=>{ l.style.display="none"; }, 1200); });
+document.getElementById("voltarEmpresasBtn").addEventListener("click", ()=>{ mostrar("tela5"); const l=document.getElementById("loopEmpresas"); l.style.display="flex"; clearTimeout(window._loopTimer); window._loopTimer = setTimeout(()=>{ l.style.display="none"; }, 1000); });
 document.querySelectorAll("[data-voltar]").forEach(el=>{ el.addEventListener("click", voltarPara1); });
 
 let toques = 0, timer = null;
