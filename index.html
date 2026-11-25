@@ -10,13 +10,13 @@
   body{background:white;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
   .tela{display:none;flex-direction:column;height:100vh;height:100dvh;min-height:0}
   .tela.ativa{display:flex}
-  .topo-vazio{flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;padding:0 20px 110px}
-  .logo-nome{font-size:38px;font-weight:600;letter-spacing:-0.5px;line-height:1;color:#0474E4;font-family:Arial, Helvetica, sans-serif}
-  .logo-pill{background:#0474E4;color:white;border-radius:999px;padding:2px 18px 4px;font-size:32px;font-weight:700;letter-spacing:0;line-height:1.1;margin-top:4px;display:inline-block;font-family:Arial, Helvetica, sans-serif}
+  .topo-vazio{flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;padding:0 20px 110px;font-family:'Quicksand',ui-rounded,'SF Pro Rounded',sans-serif}
+  .logo-nome{font-size:38px;font-weight:600;letter-spacing:-0.5px;line-height:1;color:#0474E4;font-family:'Quicksand',ui-rounded,'SF Pro Rounded','Segoe UI Rounded',sans-serif}
+  .logo-pill{background:#0474E4;color:white;border-radius:999px;padding:2px 18px 4px;font-size:32px;font-weight:700;letter-spacing:0;line-height:1.1;margin-top:4px;display:inline-block;font-family:'Quicksand',ui-rounded,'SF Pro Rounded','Segoe UI Rounded',sans-serif}
   .logo-sub{display:none}
-  .meio{flex:1;display:flex;flex-direction:row;justify-content:center;align-items:flex-start;gap:12px;padding:70px 18px 0}
-  .btn-click{background:#0474E4;color:white;border:none;border-radius:999px;flex:1;height:50px;font-size:22px;font-weight:700;letter-spacing:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 10px;font-family:Arial, Helvetica, sans-serif}
-  .btn-centro{background:#0474E4;color:white;border:none;border-radius:999px;flex:1;height:50px;font-size:22px;font-weight:700;letter-spacing:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 10px;font-family:Arial, Helvetica, sans-serif}
+  .meio{flex:1;display:flex;flex-direction:row;justify-content:center;align-items:flex-start;gap:12px;padding:70px 18px 0;font-family:'Quicksand',ui-rounded,'SF Pro Rounded',sans-serif}
+  .btn-click{background:#0474E4;color:white;border:none;border-radius:999px;flex:1;height:50px;font-size:22px;font-weight:700;letter-spacing:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 10px;font-family:'Quicksand',ui-rounded,'SF Pro Rounded','Segoe UI Rounded',sans-serif}
+  .btn-centro{background:#0474E4;color:white;border:none;border-radius:999px;flex:1;height:50px;font-size:22px;font-weight:700;letter-spacing:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 10px;font-family:'Quicksand',ui-rounded,'SF Pro Rounded','Segoe UI Rounded',sans-serif}
   .topo-azul{background:var(--azul);color:white;display:flex;align-items:center;height:64px;padding:0 12px;gap:12px;user-select:none;box-shadow:none;position:relative;z-index:2}
   .voltar{cursor:pointer;display:flex;align-items:center}
   .topo-azul h1{font-size:23px;flex:1;font-weight:900;letter-spacing:-0.5px}
@@ -66,6 +66,7 @@
   #detro-native-canvas{display:block;width:50px;height:50px}
   #loopEmpresas{flex:1;min-height:0;background:white;display:none;flex-direction:column;justify-content:center;align-items:center;min-height:200px;width:100%}
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <div id="enviadoMsg">Enviado!</div>
@@ -224,7 +225,7 @@
 
 <script>
 const empresas = [
-  "Brazinha",
+  "Viação Brazinha",
   "Transportes Flores",
   "Evanil Transportes e Turismo",
   "Expresso Nossa Senhora da Glória",
