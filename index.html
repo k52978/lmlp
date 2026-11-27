@@ -23,7 +23,7 @@
   .btn-click{background:#A9A9A9;color:white;border:none;border-radius:999px;flex:1;height:44px;font-size:16px;font-weight:700;font-family:'Quicksand',ui-rounded,'SF Pro Rounded',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 10px}
   .btn-centro{background:#A9A9A9;color:white;border:none;border-radius:999px;flex:1;height:44px;font-size:16px;font-weight:700;font-family:'Quicksand',ui-rounded,'SF Pro Rounded',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 10px}
   .btn-click svg,.btn-centro svg{width:20px;height:20px;flex-shrink:0}
-  .topo-azul{background:#A9A9A9;color:white;display:flex;align-items:center;height:64px;padding:0 12px;gap:12px;user-select:none;box-shadow:none;position:relative;z-index:2}
+  .topo-azul{background:#23AC26;color:white;display:flex;align-items:center;height:64px;padding:0 12px;gap:12px;user-select:none;box-shadow:none;position:relative;z-index:2}
   .voltar{cursor:pointer;display:flex;align-items:center}
   .topo-azul h1{font-size:23px;flex:1;font-weight:900;letter-spacing:-0.5px}
   .form{flex:1;padding:32px 28px 15px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
@@ -60,7 +60,7 @@
   .foto-card p{font-size:16px;font-weight:700;margin-top:8px;word-break:break-word}
   #statusPub{font-size:16px;font-weight:800;margin-top:10px;word-break:break-word;text-align:center}
   /* LOOP NA ABA EMPRESAS: nunca cobre cabecalho, pesquisa ou outras telas */
-  #enviadoMsg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;font-weight:900;background:none;color:#0474E4;padding:0;border-radius:0;z-index:9999;display:none;box-shadow:none;background:white;display:none;flex-direction:column;justify-content:center;align-items:center;min-height:200px}
+  #enviadoMsg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;font-weight:900;background:none;color:#23AC26;padding:0;border-radius:0;z-index:9999;display:none;box-shadow:none;background:white;display:none;flex-direction:column;justify-content:center;align-items:center;min-height:200px}
   .rodape{height:40px;background:#0474E4;border-radius:26px 26px 0 0;box-shadow:none;flex-shrink:0;position:relative;z-index:10;display:flex;align-items:center;justify-content:center;gap:16px}
   .rodape-btn{background:none;border:none;color:white;font-size:22px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 20px;border-radius:999px}
   .rodape-btn.ativo{background:rgba(255,255,255,.22)}
@@ -332,6 +332,30 @@ function getRepoInfo(){
 }
 function getBranch(){ return "principal"; }
 
+async function carregarMensagens(){
+  const div = document.getElementById("listaMensagens");
+  if(!div) return;
+  div.innerHTML = "";
+  const lista = await buscarMensagens();
+  if(lista.length === 0){ div.innerHTML = "<p style='font-size:15px;color:#888'>Nenhuma mensagem ainda.</p>"; return; }
+  lista.slice().reverse().forEach((m)=>{
+    const c = document.createElement("div"); c.className = "card";
+    const b = document.createElement("b"); b.textContent = (m.nome || "Sem nome") + (m.assunto ? " - " + m.assunto : "");
+    const txt = document.createElement("p"); txt.textContent = m.mensagem || "";
+    const data = document.createElement("p"); data.style.cssText = "font-size:13px;color:#888";
+    try{ data.textContent = new Date(m.data).toLocaleString("pt-BR"); }catch(e){ data.textContent = m.data || ""; }
+    c.appendChild(b); c.appendChild(txt); c.appendChild(data); div.appendChild(c);
+  });
+}
+async function buscarMensagens(){
+  const { owner, repo } = getRepoInfo();
+  try{
+    const resp = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${getBranch()}/mensagens.json?t=${Date.now()}`);
+    if(!resp.ok) return [];
+    const lista = await resp.json();
+    return Array.isArray(lista) ? lista : [];
+  }catch(e){ return []; }
+}
 async function buscarAcervo(){
   const { owner, repo } = getRepoInfo();
   try{
@@ -427,21 +451,7 @@ async function enviar(){
   let msg = document.getElementById("mensagem").value.trim();
   if(!nome || !msg){ alert("Preenche o nome e a mensagem!"); return; }
   const token = document.getElementById("tokenGithub").value.trim();
-  const limpar = ()=>{
-    document.getElementById("nome").value = "";
-    document.getElementById("assunto").value = "";
-    document.getElementById("mensagem").value = "";
-    var aviso = document.getElementById("enviadoMsg");
-    aviso.style.display = "block";
-    setTimeout(()=>{ aviso.style.display = "none"; voltarPara1(); }, 1500);
-  };
-  if(!token){
-    const emailDestino = "sacnigphotobus@gmail.com";
-    const assuntoEmail = encodeURIComponent((assunto || "Contato") + " - " + nome);
-    const corpoEmail = encodeURIComponent("Nome: " + nome + "\nAssunto: " + (assunto || "-") + "\n\nMensagem:\n" + msg);
-    window.location.href = "mailto:" + emailDestino + "?subject=" + assuntoEmail + "&body=" + corpoEmail;
-    limpar(); return;
-  }
+  if(!token){ alert("Cola o token na aba Publicar primeiro, depois envia de novo."); return; }
   try{
     const { owner, repo } = getRepoInfo();
     const headers = { "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json", "Content-Type": "application/json" };
@@ -462,40 +472,16 @@ async function enviar(){
       body: JSON.stringify({ message: "Nova mensagem " + nome, content: novoConteudo, ...(sha ? { sha } : {}), branch: getBranch() })
     });
     if(!up.ok){ const err = await up.json().catch(()=>({})); throw new Error(err.message || up.status); }
-    limpar();
+    document.getElementById("nome").value = "";
+    document.getElementById("assunto").value = "";
+    document.getElementById("mensagem").value = "";
+    var aviso = document.getElementById("enviadoMsg");
+    aviso.style.display = "block";
+    setTimeout(()=>{ aviso.style.display = "none"; voltarPara1(); }, 1500);
   }catch(e){
     console.error(e);
-    alert("Nao deu para salvar a mensagem na aba Publicar. Vou abrir o e-mail como antes. Detalhe: " + e.message);
-    const emailDestino = "sacnigphotobus@gmail.com";
-    const assuntoEmail = encodeURIComponent((assunto || "Contato") + " - " + nome);
-    const corpoEmail = encodeURIComponent("Nome: " + nome + "\nAssunto: " + (assunto || "-") + "\n\nMensagem:\n" + msg);
-    window.location.href = "mailto:" + emailDestino + "?subject=" + assuntoEmail + "&body=" + corpoEmail;
-    limpar();
+    alert("Nao deu para enviar. Detalhe: " + e.message);
   }
-}
-async function carregarMensagens(){
-  const div = document.getElementById("listaMensagens");
-  if(!div) return;
-  div.innerHTML = "";
-  const lista = await buscarMensagens();
-  if(lista.length === 0){ div.innerHTML = "<p style='font-size:15px;color:#888'>Nenhuma mensagem ainda.</p>"; return; }
-  lista.slice().reverse().forEach((m)=>{
-    const c = document.createElement("div"); c.className = "card";
-    const b = document.createElement("b"); b.textContent = (m.nome || "Sem nome") + (m.assunto ? " - " + m.assunto : "");
-    const txt = document.createElement("p"); txt.textContent = m.mensagem || "";
-    const data = document.createElement("p"); data.style.cssText = "font-size:13px;color:#888";
-    try{ data.textContent = new Date(m.data).toLocaleString("pt-BR"); }catch(e){ data.textContent = m.data || ""; }
-    c.appendChild(b); c.appendChild(txt); c.appendChild(data); div.appendChild(c);
-  });
-}
-async function buscarMensagens(){
-  const { owner, repo } = getRepoInfo();
-  try{
-    const resp = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${getBranch()}/mensagens.json?t=${Date.now()}`);
-    if(!resp.ok) return [];
-    const lista = await resp.json();
-    return Array.isArray(lista) ? lista : [];
-  }catch(e){ return []; }
 }
 let fotoBase64 = "";
 let fotoNomeOriginal = "foto.jpg";
